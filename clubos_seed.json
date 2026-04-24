@@ -1,0 +1,171 @@
+{
+  "seed_version": "1.0",
+  "description": "ClubOS MVP — seed data para testing local / staging",
+
+  "venues": [
+    {
+      "id": "00000000-0000-0000-0000-000000000001",
+      "slug": "club-demo",
+      "name": "Club Demo CL",
+      "owner_id": "{{REPLACE_WITH_AUTH_USER_UUID}}",
+      "logo_url": "https://storage.example.com/venues/club-demo/logo.png",
+      "primary_color": "#0A0A0A",
+      "accent_color": "#FF3366",
+      "country": "CL",
+      "city": "Santiago",
+      "whatsapp_number": "+56912345678",
+      "instagram_handle": "clubdemocl",
+      "default_gateway": "webpay",
+      "timezone": "America/Santiago",
+      "is_active": true,
+      "plan": "mvp"
+    }
+  ],
+
+  "profiles": [
+    {
+      "id": "{{REPLACE_WITH_AUTH_USER_UUID}}",
+      "venue_id": "00000000-0000-0000-0000-000000000001",
+      "role": "owner",
+      "display_name": "Nahuel Admin"
+    },
+    {
+      "id": "{{REPLACE_WITH_STAFF_USER_UUID}}",
+      "venue_id": "00000000-0000-0000-0000-000000000001",
+      "role": "staff",
+      "display_name": "Staff Puerta"
+    }
+  ],
+
+  "events": [
+    {
+      "id": "00000000-0000-0000-0000-000000000010",
+      "venue_id": "00000000-0000-0000-0000-000000000001",
+      "name": "TECHNO NOCHE — Vol.1",
+      "description": "Primera edición. 4 horas de techno sin cortes.",
+      "flyer_url": "https://storage.example.com/events/techno-vol1/flyer.jpg",
+      "date": "2025-05-10T23:00:00-04:00",
+      "doors_open": "2025-05-10T22:00:00-04:00",
+      "end_time": "2025-05-11T05:00:00-04:00",
+      "location_name": "Club Demo CL",
+      "genre": "techno",
+      "min_age": 18,
+      "dress_code": "All black",
+      "published": true,
+      "is_active": true
+    },
+    {
+      "id": "00000000-0000-0000-0000-000000000011",
+      "venue_id": "00000000-0000-0000-0000-000000000001",
+      "name": "HOUSE SESSIONS — Mayo",
+      "description": "House / Deep House toda la noche.",
+      "flyer_url": "https://storage.example.com/events/house-mayo/flyer.jpg",
+      "date": "2025-05-24T23:00:00-04:00",
+      "doors_open": "2025-05-24T22:30:00-04:00",
+      "genre": "house",
+      "min_age": 18,
+      "published": false,
+      "is_active": true
+    }
+  ],
+
+  "ticket_types": [
+    {
+      "id": "00000000-0000-0000-0000-000000000020",
+      "event_id": "00000000-0000-0000-0000-000000000010",
+      "name": "Preventa Temprana",
+      "price": 5000,
+      "currency": "CLP",
+      "quantity_total": 100,
+      "quantity_sold": 0,
+      "sale_end": "2025-05-08T23:59:00-04:00",
+      "max_per_order": 4,
+      "is_active": true,
+      "sort_order": 1
+    },
+    {
+      "id": "00000000-0000-0000-0000-000000000021",
+      "event_id": "00000000-0000-0000-0000-000000000010",
+      "name": "Preventa General",
+      "price": 8000,
+      "currency": "CLP",
+      "quantity_total": 200,
+      "quantity_sold": 0,
+      "sale_end": "2025-05-10T18:00:00-04:00",
+      "max_per_order": 4,
+      "is_active": true,
+      "sort_order": 2
+    },
+    {
+      "id": "00000000-0000-0000-0000-000000000022",
+      "event_id": "00000000-0000-0000-0000-000000000010",
+      "name": "VIP",
+      "price": 15000,
+      "currency": "CLP",
+      "quantity_total": 30,
+      "quantity_sold": 0,
+      "max_per_order": 2,
+      "is_active": true,
+      "sort_order": 3
+    }
+  ],
+
+  "attendees": [
+    {
+      "id": "00000000-0000-0000-0000-000000000030",
+      "venue_id": "00000000-0000-0000-0000-000000000001",
+      "email": "test.user1@example.com",
+      "phone_whatsapp": "+56911111111",
+      "first_name": "María",
+      "last_name": "González",
+      "instagram": "@mariagonzalez",
+      "consent_marketing": true,
+      "consent_data_sharing": true,
+      "consent_at": "2025-04-01T12:00:00Z",
+      "source": "organic"
+    },
+    {
+      "id": "00000000-0000-0000-0000-000000000031",
+      "venue_id": "00000000-0000-0000-0000-000000000001",
+      "email": "test.user2@example.com",
+      "phone_whatsapp": "+56922222222",
+      "first_name": "Diego",
+      "last_name": "Rojas",
+      "instagram": "@diegorojas",
+      "consent_marketing": true,
+      "consent_data_sharing": false,
+      "consent_at": "2025-04-02T15:00:00Z",
+      "source": "rrpp"
+    }
+  ],
+
+  "orders": [
+    {
+      "id": "00000000-0000-0000-0000-000000000040",
+      "venue_id": "00000000-0000-0000-0000-000000000001",
+      "event_id": "00000000-0000-0000-0000-000000000010",
+      "attendee_id": "00000000-0000-0000-0000-000000000030",
+      "ticket_type_id": "00000000-0000-0000-0000-000000000020",
+      "quantity": 1,
+      "unit_price": 5000,
+      "total_amount": 5000,
+      "currency": "CLP",
+      "payment_status": "paid",
+      "payment_gateway": "webpay",
+      "payment_reference": "WEBPAY-TEST-001",
+      "paid_at": "2025-04-20T10:00:00Z"
+    }
+  ],
+
+  "tickets": [
+    {
+      "id": "00000000-0000-0000-0000-000000000050",
+      "order_id": "00000000-0000-0000-0000-000000000040",
+      "event_id": "00000000-0000-0000-0000-000000000010",
+      "attendee_id": "00000000-0000-0000-0000-000000000030",
+      "ticket_type_id": "00000000-0000-0000-0000-000000000020",
+      "qr_code": "TEST-QR-MARIA-TECHNO-001",
+      "status": "valid"
+    }
+  ]
+}
