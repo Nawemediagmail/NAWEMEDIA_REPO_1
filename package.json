@@ -1,0 +1,17 @@
+{
+  "name": "nawemedia-repo",
+  "version": "1.0.0",
+  "description": "Nawemedia repository with Composio and Anthropic integration",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@composio/core": "latest",
+    "@composio/claude-agent-sdk": "latest",
+    "@anthropic-ai/claude-agent-sdk": "latest"
+  }
+}
