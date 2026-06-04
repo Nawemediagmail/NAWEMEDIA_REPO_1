@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NAWEMEDIA | Onboarding Portal</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=Bebas+Neue&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --color-bg: #0a0a0a;
+      --color-gold: #f6cf83;
+      --color-magenta: #d400d4;
+      --color-magenta-2: #ff44ef;
+    }
+    body {
+      background: radial-gradient(circle at top left, rgba(212,0,212,.22), transparent 32rem),
+                  radial-gradient(circle at 80% 10%, rgba(246,207,131,.13), transparent 25rem),
+                  linear-gradient(180deg, #050405 0%, var(--color-bg) 45%, #070407 100%);
+      font-family: 'Inter', sans-serif;
+      color: white;
+      min-height: 100vh;
+    }
+    .font-display { font-family: 'Bebas Neue', sans-serif; }
+    .input-field {
+      width: 100%;
+      padding: 12px 16px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: white;
+      outline: none;
+      transition: all 0.2s ease;
+    }
+    .input-field:focus {
+      border-color: var(--color-gold);
+      box-shadow: 0 0 0 4px rgba(246,207,131,0.1);
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #f59e0b, #f6cf83);
+      color: #000;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      transition: all 0.2s ease;
+      box-shadow: 0 10px 20px rgba(246,207,131,0.2);
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 15px 30px rgba(246,207,131,0.3);
+    }
+    .btn-primary:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+    .glass-card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      backdrop-filter: blur(20px);
+      border-radius: 40px;
+    }
+    .progress-gradient {
+      background: linear-gradient(90deg, #0066FF, #8B00FF, #FF00AA, #FFD700);
+    }
+    .animate-fade-in {
+      animation: fadeIn 0.5s ease-out forwards;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body class="flex items-center justify-center p-4 sm:p-8">
+
+  <div id="app" class="w-full max-w-4xl">
+    <!-- Header -->
+    <div id="header" class="text-center mb-12 animate-fade-in">
+      <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] mb-6 border border-white/10 bg-white/5 backdrop-blur-md text-slate-400">
+        <span class="w-2 h-2 rounded-full bg-[#f6cf83] animate-pulse"></span>
+        NAWEMEDIA Onboarding Portal
+      </div>
+      <h1 class="text-4xl sm:text-6xl font-black uppercase tracking-tighter mb-4 bg-gradient-to-r from-white via-slate-400 to-slate-600 bg-clip-text text-transparent">
+        Crea tu Identidad Digital
+      </h1>
+      <p class="text-slate-400 max-w-2xl mx-auto text-sm sm:text-base leading-relaxed">
+        Completa este formulario con toda tu información y material. <br class="hidden sm:block">
+        Utilizaremos estos datos para diseñar un EPK de alto impacto que potencie tu carrera profesional.
+      </p>
+    </div>
+
+    <!-- Form Container -->
+    <div id="form-container" class="glass-card p-6 sm:p-10 shadow-2xl">
+      <!-- Progress Bar -->
+      <div class="mb-8 text-center">
+        <div class="flex justify-between items-end mb-2">
+          <span id="step-text" class="text-xs font-bold uppercase tracking-widest text-slate-400">Step 1 of 8</span>
+          <span id="percent-text" class="text-xs font-bold text-[#f6cf83] uppercase tracking-widest">0% Complete</span>
+        </div>
+        <div class="h-1.5 w-full bg-white/10 rounded-full overflow-hidden">
+          <div id="progress-bar" class="h-full progress-gradient transition-all duration-500" style="width: 0%"></div>
+        </div>
+      </div>
+
+      <!-- Step Content -->
+      <div id="step-content" class="animate-fade-in">
+        <!-- Content injected by JS -->
+      </div>
+
+      <!-- Navigation -->
+      <div class="flex justify-between items-center mt-10 gap-4">
+        <button id="prev-btn" onclick="prevStep()" class="px-6 py-3 rounded-full text-sm font-bold uppercase tracking-widest text-slate-400 hover:text-white disabled:opacity-0 transition-all">
+          Anterior
+        </button>
+        <button id="next-btn" onclick="handleNext()" class="btn-primary px-10 py-3 rounded-full text-sm font-black uppercase tracking-widest transition-all">
+          Siguiente
+        </button>
+      </div>
+    </div>
+
+    <!-- Success Message -->
+    <div id="success-screen" class="hidden text-center animate-fade-in">
+      <div class="max-w-md mx-auto p-10 rounded-[40px] bg-white/5 border border-white/10 backdrop-blur-xl">
+        <div class="w-20 h-20 rounded-full bg-[#f6cf83]/20 text-[#f6cf83] flex items-center justify-center mx-auto mb-6">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <h1 class="text-3xl font-black uppercase tracking-tight mb-4">¡Solicitud Enviada!</h1>
+        <p class="text-slate-400 mb-8 leading-relaxed">
+          Hemos recibido toda tu información. El equipo de <span class="text-white font-bold">NAWEMEDIA</span> revisará tus assets y se pondrá en contacto contigo pronto.
+        </p>
+        <button onclick="location.reload()" class="btn-primary px-8 py-3 rounded-full text-sm font-black uppercase tracking-widest block mx-auto">
+          Volver al Inicio
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading Overlay -->
+  <div id="loading" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+    <div class="text-center space-y-3">
+      <div class="w-12 h-12 border-4 border-[#f6cf83]/30 border-t-[#f6cf83] rounded-full animate-spin mx-auto"></div>
+      <span class="text-xs font-bold uppercase tracking-widest text-[#f6cf83]">Procesando solicitud...</span>
+    </div>
+  </div>
+
+  <script>
+    let currentStep = 1;
+    const formData = {};
+    
+    const steps = [
+      {
+        title: "Identidad del Artista",
+        icon: "User",
+        fields: [
+          { name: "artistName", label: "Nombre Artístico *", type: "text", placeholder: "Ej. DJ NAWEL", required: true },
+          { name: "debutYear", label: "Año de Debut", type: "text", placeholder: "Ej. 2020" },
+          { name: "genres", label: "Géneros Principales *", type: "text", placeholder: "Ej. Afro House, Tribal, Circuit", required: true, full: true },
+          { name: "showsCount", label: "Shows Aproximados", type: "text", placeholder: "Ej. 100+" },
+          { name: "countriesCount", label: "Países Recorridos", type: "text", placeholder: "Ej. 5" },
+        ]
+      },
+      {
+        title: "Contacto & Redes",
+        icon: "Globe",
+        fields: [
+          { name: "bookingEmail", label: "Email de Booking *", type: "email", placeholder: "booking@domain.com", required: true },
+          { name: "bookingWhatsapp", label: "WhatsApp de Booking", type: "text", placeholder: "+56 9 ..." },
+          { name: "instagram", label: "Instagram *", type: "text", placeholder: "https://instagram.com/...", required: true },
+          { name: "soundcloudProfile", label: "SoundCloud Perfil *", type: "text", placeholder: "https://soundcloud.com/...", required: true },
+          { name: "spotify", label: "Spotify Artista", type: "text", placeholder: "https://open.spotify.com/..." },
+          { name: "youtube", label: "YouTube Canal", type: "text", placeholder: "https://youtube.com/..." },
+        ]
+      },
+      {
+        title: "Biografía",
+        icon: "User",
+        fields: [
+          { name: "bioEs", label: "Bio en Español *", type: "textarea", placeholder: "Cuéntanos tu historia...", required: true, full: true },
+          { name: "bioEn", label: "Bio en Inglés (Opcional)", type: "textarea", placeholder: "English version...", full: true },
+          { name: "highlights", label: "Hitos Clave / Logros", type: "textarea", placeholder: "Festivales, sellos, premios...", full: true },
+        ]
+      },
+      {
+        title: "Música & Video",
+        icon: "Music",
+        fields: [
+          { name: "sets", label: "Sets de SoundCloud * (Un link por línea)", type: "textarea", placeholder: "https://soundcloud.com/...", required: true, full: true },
+          { name: "releases", label: "Tracks/Releases SoundCloud * (Un link por línea)", type: "textarea", placeholder: "https://soundcloud.com/...", required: true, full: true },
+          { name: "youtube", label: "Video Principal (YouTube/Vimeo)", type: "text", placeholder: "https://youtube.com/...", full: true },
+        ]
+      },
+      {
+        title: "Material Visual",
+        icon: "Camera",
+        fields: [
+          { name: "heroPhotoLink", label: "Link Foto Hero *", type: "text", placeholder: "Google Drive / Dropbox", required: true },
+          { name: "pressPhotosLink", label: "Link Fotos Prensa *", type: "text", placeholder: "Google Drive / Dropbox", required: true },
+          { name: "logoBlackLink", label: "Link Logo Negro *", type: "text", placeholder: "PNG Transparente", required: true },
+          { name: "logoColorLink", label: "Link Logo Color *", type: "text", placeholder: "PNG Transparente", required: true },
+        ]
+      },
+      {
+        title: "Agenda de Shows",
+        icon: "Calendar",
+        fields: [
+          { name: "upcomingShows", label: "Shows Confirmados", type: "textarea", placeholder: "YYYY-MM-DD | Lugar | Ciudad | País | estado | link", full: true },
+        ]
+      },
+      {
+        title: "Press Kit & Extras",
+        icon: "Upload",
+        fields: [
+          { name: "hdPhotosLink", label: "Link Carpeta Fotos HD", type: "text", placeholder: "Drive / Dropbox" },
+          { name: "riderLink", label: "Link Rider Técnico", type: "text", placeholder: "PDF / Carpeta" },
+          { name: "extraAssets", label: "Otros Assets / Notas", type: "textarea", placeholder: "Videos, reels, referencias visuales...", full: true },
+        ]
+      },
+      {
+        title: "Validación Final",
+        icon: "Check",
+        fields: [
+          { name: "deadline", label: "Fecha Límite deseada", type: "date" },
+          { name: "notes", label: "Notas Adicionales", type: "textarea", placeholder: "Cualquier detalle extra..." },
+          { name: "confirmation", label: "Confirmación de Material *", type: "select", options: [
+            { value: "ready", label: "Confirmo que todo el material está completo" },
+            { value: "pending", label: "Faltan algunos detalles" }
+          ], required: true },
+        ]
+      }
+    ];
+
+    function renderStep() {
+      const stepData = steps[currentStep - 1];
+      const content = document.getElementById('step-content');
+      
+      let fieldsHtml = '';
+      stepData.fields.forEach(f => {
+        const val = formData[f.name] || '';
+        const isFull = f.full ? 'sm:col-span-2' : '';
+        
+        if (f.type === 'textarea') {
+          fieldsHtml += `
+            <div class="flex flex-col gap-2 ${isFull}">
+              <label class="text-xs font-bold uppercase tracking-widest text-slate-400 ml-1">${f.label}</label>
+              <textarea name="${f.name}" oninput="updateData(this)" class="input-field min-h-[100px]">${val}</textarea>
+            </div>`;
+        } else if (f.type === 'select') {
+          let options = f.options.map(o => `<option value="${o.value}" ${val === o.value ? 'selected' : ''}>${o.label}</option>`).join('');
+          fieldsHtml += `
+            <div class="flex flex-col gap-2 ${isFull}">
+              <label class="text-xs font-bold uppercase tracking-widest text-slate-400 ml-1">${f.label}</label>
+              <select name="${f.name}" onchange="updateData(this)" class="input-field">
+                <option value="">Selecciona una opción</option>
+                ${options}
+              </select>
+            </div>`;
+        } else {
+          fieldsHtml += `
+            <div class="flex flex-col gap-2 ${isFull}">
+              <label class="text-xs font-bold uppercase tracking-widest text-slate-400 ml-1">${f.label}</label>
+              <input name="${f.name}" type="${f.type}" value="${val}" oninput="updateData(this)" class="input-field" placeholder="${f.placeholder || ''}">
+            </div>`;
+        }
+      });
+
+      content.innerHTML = `
+        <div class="space-y-6 animate-fade-in">
+          <div class="flex items-center gap-3 mb-6">
+            <div class="p-3 rounded-2xl bg-white/10 text-white">
+              <span class="font-black text-xs uppercase tracking-tighter">${stepData.icon}</span>
+            </div>
+            <h2 class="text-2xl font-black uppercase tracking-tight">${stepData.title}</h2>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            ${fieldsHtml}
+          </div>
+        </div>
+      `;
+
+      document.getElementById('step-text').innerText = `Step ${currentStep} of 8`;
+      document.getElementById('percent-text').innerText = `${Math.round((currentStep / 8) * 100)}% Complete`;
+      document.getElementById('progress-bar').style.width = `${(currentStep / 8) * 100}%`;
+      document.getElementById('prev-btn').disabled = currentStep === 1;
+      
+      const nextBtn = document.getElementById('next-btn');
+      if (currentStep === 8) {
+        nextBtn.innerText = "Enviar Solicitud";
+      } else {
+        nextBtn.innerText = "Siguiente";
+      }
+      
+      validateCurrentStep();
+    }
+
+    window.updateData = (el) => {
+      formData[el.name] = el.value;
+      validateCurrentStep();
+    };
+
+    function validateCurrentStep() {
+      const stepData = steps[currentStep - 1];
+      const isValid = stepData.fields
+        .filter(f => f.required)
+        .every(f => formData[f.name] && formData[f.name].trim().length > 0);
+      
+      document.getElementById('next-btn').disabled = !isValid;
+    }
+
+    window.prevStep = () => {
+      if (currentStep > 1) {
+        currentStep--;
+        renderStep();
+      }
+    };
+
+    window.handleNext = async () => {
+      if (currentStep < 8) {
+        currentStep++;
+        renderStep();
+      } else {
+        // FINAL SUBMISSION
+        document.getElementById('loading').classList.remove('hidden');
+        try {
+          const res = await fetch('/api/submit-onboarding', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(formData),
+          });
+          
+          if (!res.ok) {
+            const err = await res.json();
+            throw new Error(err.error || "Error al enviar");
+          }
+          
+          document.getElementById('form-container').classList.add('hidden');
+          document.getElementById('header').classList.add('hidden');
+          document.getElementById('success-screen').classList.remove('hidden');
+        } catch (e) {
+          alert(e.message);
+        } finally {
+          document.getElementById('loading').classList.add('hidden');
+        }
+      }
+    };
+
+    renderStep();
+  </script>
+</body>
+</html>
