@@ -12,8 +12,8 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const url = process.env.NEXT_PUBLIC_SUPABASE_URL || "https://oqtmrnemjfhdvdnjvjdy.supabase.co";
-    const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9xdG1ybmVtamZoZHZkbmp2amR5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA1MTYwODksImV4cCI6MjA5NjA5MjA4OX0.pnXwVEDVxSkOhCPxMKcxRIThITSCRP84VWtqDu6MADk";
+    const url = "https://oqtmrnemjfhdvdnjvjdy.supabase.co";
+    const key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9xdG1ybmVtamZoZHZkbmp2amR5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA1MTYwODksImV4cCI6MjA5NjA5MjA4OX0.pnXwVEDVxSkOhCPxMKcxRIThITSCRP84VWtqDu6MADk";
 
     const supabase = createClient(url, key);
 
