@@ -158,6 +158,7 @@
           { name: "genres", label: "Géneros Principales *", type: "text", placeholder: "Ej. Afro House, Tribal, Circuit", required: true, full: true },
           { name: "showsCount", label: "Shows Aproximados", type: "text", placeholder: "Ej. 100+" },
           { name: "countriesCount", label: "Países Recorridos", type: "text", placeholder: "Ej. 5" },
+          { name: "paisResidencia", label: "País de Residencia", type: "text", placeholder: "Ej. Argentina" },
         ]
       },
       {
@@ -170,6 +171,8 @@
           { name: "soundcloudProfile", label: "SoundCloud Perfil *", type: "text", placeholder: "https://soundcloud.com/...", required: true },
           { name: "spotify", label: "Spotify Artista", type: "text", placeholder: "https://open.spotify.com/..." },
           { name: "youtube", label: "YouTube Canal", type: "text", placeholder: "https://youtube.com/..." },
+          { name: "socialMedia1", label: "Red Social Adicional 1", type: "text", placeholder: "https://..." },
+          { name: "socialMedia2", label: "Red Social Adicional 2", type: "text", placeholder: "https://..." },
         ]
       },
       {
@@ -177,7 +180,7 @@
         icon: "User",
         fields: [
           { name: "bioEs", label: "Bio en Español *", type: "textarea", placeholder: "Cuéntanos tu historia...", required: true, full: true },
-          { name: "bioEn", label: "Bio en Inglés (Opcional)", type: "textarea", placeholder: "English version...", full: true },
+          { name: "formacionAcademica", label: "Formación académica y estudios", type: "textarea", placeholder: "Tus estudios, certificaciones, maestrías...", full: true },
           { name: "highlights", label: "Hitos Clave / Logros", type: "textarea", placeholder: "Festivales, sellos, premios...", full: true },
         ]
       },
@@ -186,7 +189,7 @@
         icon: "Music",
         fields: [
           { name: "sets", label: "Sets de SoundCloud * (Un link por línea)", type: "textarea", placeholder: "https://soundcloud.com/...", required: true, full: true },
-          { name: "releases", label: "Tracks/Releases SoundCloud * (Un link por línea)", type: "textarea", placeholder: "https://soundcloud.com/...", required: true, full: true },
+          { name: "musicaStreaming", label: "Música en Streaming * (Un link por línea)", type: "textarea", placeholder: "https://open.spotify.com/... o https://music.apple.com/...", required: true, full: true },
           { name: "youtube", label: "Video Principal (YouTube/Vimeo)", type: "text", placeholder: "https://youtube.com/...", full: true },
         ]
       },
@@ -194,7 +197,7 @@
         title: "Material Visual",
         icon: "Camera",
         fields: [
-          { name: "heroPhotoLink", label: "Link Foto Hero *", type: "text", placeholder: "Google Drive / Dropbox", required: true },
+          { name: "heroPhotoLink", label: "Link foto principal *", type: "text", placeholder: "Google Drive / Dropbox", required: true },
           { name: "pressPhotosLink", label: "Link Fotos Prensa *", type: "text", placeholder: "Google Drive / Dropbox", required: true },
           { name: "logoBlackLink", label: "Link Logo Negro *", type: "text", placeholder: "PNG Transparente", required: true },
           { name: "logoColorLink", label: "Link Logo Color *", type: "text", placeholder: "PNG Transparente", required: true },
@@ -204,14 +207,14 @@
         title: "Agenda de Shows",
         icon: "Calendar",
         fields: [
-          { name: "upcomingShows", label: "Shows Confirmados", type: "textarea", placeholder: "YYYY-MM-DD | Lugar | Ciudad | País | estado | link", full: true },
+          { name: "upcomingShows", label: "Shows Confirmados", type: "show-scheduler", full: true },
         ]
       },
       {
         title: "Press Kit & Extras",
         icon: "Upload",
         fields: [
-          { name: "hdPhotosLink", label: "Link Carpeta Fotos HD", type: "text", placeholder: "Drive / Dropbox" },
+          { name: "hdPhotosLink", label: "LINK DESCARGA DE MATERIAL PRESS KIT", type: "text", placeholder: "Drive / Dropbox" },
           { name: "riderLink", label: "Link Rider Técnico", type: "text", placeholder: "PDF / Carpeta" },
           { name: "extraAssets", label: "Otros Assets / Notas", type: "textarea", placeholder: "Videos, reels, referencias visuales...", full: true },
         ]
@@ -220,7 +223,7 @@
         title: "Validación Final",
         icon: "Check",
         fields: [
-          { name: "deadline", label: "Fecha Límite deseada", type: "date" },
+          { name: "domainRequired", label: "Dominio web requerido", type: "text", placeholder: "Ej. www.mimusica.com" },
           { name: "notes", label: "Notas Adicionales", type: "textarea", placeholder: "Cualquier detalle extra..." },
           { name: "confirmation", label: "Confirmación de Material *", type: "select", options: [
             { value: "ready", label: "Confirmo que todo el material está completo" },
@@ -233,13 +236,31 @@
     function renderStep() {
       const stepData = steps[currentStep - 1];
       const content = document.getElementById('step-content');
-      
+
       let fieldsHtml = '';
       stepData.fields.forEach(f => {
         const val = formData[f.name] || '';
         const isFull = f.full ? 'sm:col-span-2' : '';
-        
-        if (f.type === 'textarea') {
+
+        if (f.type === 'show-scheduler') {
+          const shows = Array.isArray(formData[f.name]) ? formData[f.name] : [];
+          let showsHtml = '';
+          shows.forEach((show, idx) => {
+            showsHtml += `
+              <div class="flex flex-col sm:flex-row gap-3 p-4 rounded-xl bg-white/5 border border-white/10">
+                <input type="date" value="${show.date || ''}" onchange="updateShow(${idx}, 'date', this.value)" class="input-field flex-1">
+                <input type="text" value="${show.club || ''}" onchange="updateShow(${idx}, 'club', this.value)" placeholder="CLUB" class="input-field flex-1">
+                <input type="text" value="${show.city || ''}" onchange="updateShow(${idx}, 'city', this.value)" placeholder="CIUDAD" class="input-field flex-1">
+                <button type="button" onclick="removeShow(${idx})" class="px-4 py-2 rounded-lg bg-red-500/20 text-red-400 hover:bg-red-500/30 text-sm font-bold">Eliminar</button>
+              </div>`;
+          });
+          fieldsHtml += `
+            <div class="flex flex-col gap-3 ${isFull}">
+              <label class="text-xs font-bold uppercase tracking-widest text-slate-400 ml-1">${f.label}</label>
+              <div class="space-y-3">${showsHtml}</div>
+              <button type="button" onclick="addShow()" class="px-4 py-2 rounded-lg bg-[#f6cf83]/20 text-[#f6cf83] hover:bg-[#f6cf83]/30 text-sm font-bold uppercase tracking-widest">+ Agregar Show</button>
+            </div>`;
+        } else if (f.type === 'textarea') {
           fieldsHtml += `
             <div class="flex flex-col gap-2 ${isFull}">
               <label class="text-xs font-bold uppercase tracking-widest text-slate-400 ml-1">${f.label}</label>
@@ -292,6 +313,26 @@
       
       validateCurrentStep();
     }
+
+    window.addShow = () => {
+      if (!formData.upcomingShows) formData.upcomingShows = [];
+      formData.upcomingShows.push({ date: '', club: '', city: '' });
+      renderStep();
+    };
+
+    window.removeShow = (idx) => {
+      if (formData.upcomingShows) {
+        formData.upcomingShows.splice(idx, 1);
+        renderStep();
+      }
+    };
+
+    window.updateShow = (idx, field, value) => {
+      if (!formData.upcomingShows) formData.upcomingShows = [];
+      if (!formData.upcomingShows[idx]) formData.upcomingShows[idx] = {};
+      formData.upcomingShows[idx][field] = value;
+      validateCurrentStep();
+    };
 
     window.updateData = (el) => {
       formData[el.name] = el.value;
