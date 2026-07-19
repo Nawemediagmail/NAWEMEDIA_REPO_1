@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Adherencia</string>
+
+    <!-- §8.5 Canal de la alarma del TAR -->
+    <string name="channel_name">Alarma de toma</string>
+    <string name="channel_desc">Alarmas exactas de tomas. No silenciar.</string>
+
+    <!-- VISIBILITY_PRIVATE: textos genéricos, sin nombre de fármaco en lockscreen -->
+    <string name="alarm_notif_title">Recordatorio de toma</string>
+    <string name="alarm_notif_text">Tocá para ver el detalle.</string>
+    <string name="alarm_screen_generic">Es la hora de tu toma</string>
+</resources>

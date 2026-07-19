@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Tema base de la ventana. Los colores reales los aplica Compose (Theme.kt);
+         este estilo solo controla la ventana antes de que Compose dibuje. -->
+    <style name="Theme.SuplementoAdherencia" parent="android:Theme.DeviceDefault.DayNight">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowActionBar">false</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+    </style>
+</resources>
