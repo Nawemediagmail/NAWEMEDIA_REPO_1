@@ -57,4 +57,17 @@ class ReglaQuelacionTest {
         val resultado = ReglaQuelacion.evaluar(VITAMINA_C, LocalTime.of(10, 31), tar)
         assertEquals(ResultadoRegla.Permitido, resultado)
     }
+
+    @Test
+    fun `proxima ventana segura durante el bloqueo devuelve TAR mas 6h`() {
+        val resultado = ReglaQuelacion.proximaVentanaSegura(LocalTime.of(11, 30), tar)
+        assertEquals(LocalTime.of(16, 30), resultado)
+    }
+
+    @Test
+    fun `proxima ventana segura ya en ventana permitida devuelve la hora actual`() {
+        val ahora = LocalTime.of(22, 0)
+        val resultado = ReglaQuelacion.proximaVentanaSegura(ahora, tar)
+        assertEquals(ahora, resultado)
+    }
 }

@@ -28,13 +28,16 @@ object ReglaQuelacion {
         return ((h - t) % MINUTOS_DIA + MINUTOS_DIA) % MINUTOS_DIA
     }
 
+    /** true si [hora] cae fuera de la ventana prohibida alrededor de [tar]. */
+    fun permitido(hora: LocalTime, tar: LocalTime): Boolean {
+        val diff = minutosDesdeAncla(hora, tar)
+        return diff in MINUTOS_DESPUES..(MINUTOS_DIA - MINUTOS_ANTES)
+    }
+
     fun evaluar(item: Item, hora: LocalTime, tar: LocalTime): ResultadoRegla {
         if (ItemFlag.CONTIENE_MAGNESIO !in item.flags) return ResultadoRegla.Permitido
 
-        val diff = minutosDesdeAncla(hora, tar)
-        val permitido = diff in MINUTOS_DESPUES..(MINUTOS_DIA - MINUTOS_ANTES)
-
-        return if (permitido) {
+        return if (permitido(hora, tar)) {
             ResultadoRegla.Permitido
         } else {
             ResultadoRegla.Bloqueado(
@@ -43,4 +46,12 @@ object ReglaQuelacion {
             )
         }
     }
+
+    /**
+     * §9.2 — "próxima ventana segura", para el widget persistente del panel expandido.
+     * Si [ahora] ya está en ventana permitida, devuelve [ahora] mismo; si no, el
+     * próximo horario en que se abre (TAR+6h).
+     */
+    fun proximaVentanaSegura(ahora: LocalTime, tar: LocalTime): LocalTime =
+        if (permitido(ahora, tar)) ahora else tar.plusHours(6)
 }

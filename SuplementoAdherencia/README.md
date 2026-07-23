@@ -1,4 +1,4 @@
-# Adherencia — Fase 1 + Fase 2
+# Adherencia — Fase 1 a Fase 4
 
 Prototipo del PRD *App de Adherencia a Suplementación y TAR*
 (target: Samsung Galaxy Z Fold 7).
@@ -187,9 +187,69 @@ notificación del TAR confirma sin abrir la app** — el gate de Fase 3 (§11)
 queda cerrado de punta a punta, no solo compilado.
 
 ### Qué falta (fuera de este alcance)
-Room+SQLCipher (Fase 0, historial persistente real), layouts adaptativos de
-plegado §9 (Fase 4), biometría (Fase 6), export CSV (Fase 5/F10), alarmas
-exactas por cada ítem del cronograma (generalización de F1).
+Room+SQLCipher (Fase 0, historial persistente real), biometría (Fase 6),
+export CSV (Fase 5/F10), alarmas exactas por cada ítem del cronograma
+(generalización de F1).
+
+---
+
+## Fase 4 — Capa adaptativa (§9): los tres estados de plegado
+
+Tres layouts, no dos, tal como pide §9 — la postura "tabletop" (bisagra
+horizontal medio-abierta) tiene prioridad sobre el ancho de pantalla, porque
+un Z Fold parado en la mesa puede reportar el mismo ancho que uno plano sobre
+el escritorio, pero necesita el layout partido igual.
+
+| Estado | §PRD | Cómo se detecta | Qué muestra |
+|---|---|---|---|
+| Compacto (cover, cerrado) | §9.1 | `WindowWidthSizeClass.Compact` | Lista vertical simple — lo mismo que ya tenía Fase 3 |
+| Desplegado (expandido) | §9.2 | `WindowWidthSizeClass` ≠ Compact, sin bisagra en `HALF_OPENED` | Two-pane: cronograma a la izquierda, ficha completa del ítem seleccionado a la derecha (datos de etiqueta, con badge "(estimado)" en valores INFERENCIA) + widget persistente de magnesio y "próxima ventana segura" |
+| Flex / tabletop | §9.3 | `FoldingFeature` con `orientation=HORIZONTAL` y `state=HALF_OPENED` | Partido arriba/abajo: mitad superior el "ítem actual" (el pendiente más urgente), mitad inferior un botón grande de confirmación — con un `Spacer` exacto sobre los bounds de la bisagra para no dibujar nada crítico ahí |
+
+### Qué implementa
+
+| Archivo | Qué hace |
+|---|---|
+| `ui/FoldState.kt` | `rememberFoldInfo()` — lee `WindowInfoTracker`/`FoldingFeature` de `androidx.window` y devuelve si hay postura tabletop y los bounds de la bisagra |
+| `ui/HoyScreen.kt` (reescrito) | `HoyScreen(activity)` decide entre `CompactoHoy` / `ExpandidoHoy` / `TabletopHoy`; `ItemDelDiaCard` ahora es seleccionable (para el panel expandido) sin perder su comportamiento de confirmación |
+| `domain/ReglaQuelacion.kt` (+`proximaVentanaSegura`) | Reutiliza la misma matemática de ventana de §3.1 para el widget persistente, en vez de duplicarla |
+
+### §9.4 — Estado sobrevive la recreación de Activity
+
+La Activity se recrea al cambiar de estado de plegado (cambia el
+`WindowSizeClass`). En vez de introducir un ViewModel (prematuro para el
+estado que tenemos hoy: una pestaña seleccionada y un ítem seleccionado),
+se usa `rememberSaveable` en ambos casos — sobrevive la recreación via el
+Bundle de instancia guardada, sin la ceremonia de Hilt/ViewModel que el
+PRD prevé recién para cuando haga falta. El scroll de las listas ya lo
+resuelve Compose solo (`rememberLazyListState()` usa `rememberSaveable`
+internamente).
+
+### Verificado, no solo escrito
+
+`./gradlew assembleDebug testDebugUnitTest` → **BUILD SUCCESSFUL**, APK
+generado, **34/34 tests pasando** (32 de Fases 2-3 + 2 nuevos para
+`proximaVentanaSegura`). Esto confirma que el código compila con las
+dependencias nuevas (`androidx.window`, `material3-window-size-class`) y
+que la lógica de dominio sigue correcta.
+
+**Lo que esto NO prueba —y hace falta el Z Fold 7 físico—:** que los tres
+estados realmente se vean bien y no pierdan estado en el hardware real. El
+emulador no reproduce `FoldingFeature` de forma confiable; esto se prueba
+solo en el dispositivo, igual que el gate de Fase 1.
+
+### Cómo probarlo en el Z Fold 7 (gate de §11: "sin pérdida de estado")
+
+1. **Cerrado** (cover screen): debería verse la lista compacta de siempre.
+2. **Desplegalo**: debería aparecer el panel doble (lista + ficha). Tocá un
+   ítem de la izquierda y confirmá que su ficha completa aparece a la derecha.
+3. **Parado en la mesa** (ángulo ~90°, apoyado sobre el borde): debería
+   cambiar al layout partido con el ítem actual arriba y el botón grande
+   abajo, sin nada dibujado sobre la bisagra.
+4. **Cambiá de estado varias veces seguidas** (cerrado → desplegado →
+   tabletop → cerrado) y confirmá que no perdés la pestaña seleccionada
+   (Hoy/Diagnóstico) ni, en desplegado, el ítem que tenías elegido en el
+   panel derecho.
 
 ---
 

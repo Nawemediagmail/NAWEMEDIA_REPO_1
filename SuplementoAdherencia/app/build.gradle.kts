@@ -13,8 +13,8 @@ android {
         // §6 STACK: minSdk 30, targetSdk última estable.
         minSdk = 30
         targetSdk = 35
-        versionCode = 2
-        versionName = "0.2-fase2"
+        versionCode = 4
+        versionName = "0.4-fase4"
     }
 
     buildTypes {
@@ -50,7 +50,11 @@ dependencies {
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
+    implementation("androidx.compose.material3:material3-window-size-class")
     implementation("androidx.compose.material:material-icons-extended")
+
+    // §9 — detección de FoldingFeature (postura tabletop/bisagra) para la capa adaptativa.
+    implementation("androidx.window:window:1.3.0")
 
     debugImplementation("androidx.compose.ui:ui-tooling")
 

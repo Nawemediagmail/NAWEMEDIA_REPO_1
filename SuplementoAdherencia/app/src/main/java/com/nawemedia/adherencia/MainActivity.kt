@@ -19,6 +19,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontFamily
@@ -43,7 +44,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             AdherenciaTheme {
                 Surface(color = MaterialTheme.colorScheme.background) {
-                    AppRoot()
+                    AppRoot(activity = this@MainActivity)
                 }
             }
         }
@@ -53,8 +54,10 @@ class MainActivity : ComponentActivity() {
 private enum class Pantalla(val etiqueta: String) { HOY("Hoy"), DIAGNOSTICO("Diagnóstico") }
 
 @Composable
-private fun AppRoot() {
-    var pantalla by remember { mutableStateOf(Pantalla.HOY) }
+private fun AppRoot(activity: ComponentActivity) {
+    // §9.4: rememberSaveable, no remember — la Activity se recrea al cambiar de
+    // estado de plegado (cambia el WindowSizeClass), y la pestaña activa no debe perderse.
+    var pantalla by rememberSaveable { mutableStateOf(Pantalla.HOY) }
     Column(Modifier.fillMaxSize()) {
         TabRow(selectedTabIndex = pantalla.ordinal) {
             Pantalla.entries.forEach { p ->
@@ -62,7 +65,7 @@ private fun AppRoot() {
             }
         }
         when (pantalla) {
-            Pantalla.HOY -> HoyScreen()
+            Pantalla.HOY -> HoyScreen(activity)
             Pantalla.DIAGNOSTICO -> Fase1Screen()
         }
     }
