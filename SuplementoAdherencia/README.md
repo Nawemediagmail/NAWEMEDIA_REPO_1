@@ -123,7 +123,7 @@ desde la terminal del proyecto.
 
 ---
 
-## Fase 3 — UI Compose: vista "Hoy" + confirmación
+## Fase 3 — UI Compose: vista "Hoy" + confirmación ✅ GATE PASADO EN DISPOSITIVO
 
 ### Sistema de color: identidad de categoría vs. estado de la regla
 
@@ -177,11 +177,14 @@ Corrido en este entorno con el mismo Android SDK bootstrapeado que en Fase 2:
   errores (confirma que Compose + Material Icons Extended + el manifest
   actualizado compilan y empaquetan correctamente).
 
-Lo único que **no** se verificó acá (requiere el Z Fold 7 físico): que la
-UI se vea y comporte bien en pantalla real, y que el botón "Tomé" de la
-notificación efectivamente actualice el estado en la vista Hoy al reabrir
-la app. Correspondería probarlo igual que Fase 1: instalar, y confirmar a
-ojo.
+**Verificado también en el Z Fold 7 físico** (lo que no se puede probar en
+este entorno): la vista Hoy renderiza el sistema de color correctamente,
+el contador de magnesio dio 174 mg (39+135, K2+D3 + Citrato) tal cual
+predice el cálculo, NAC aparece bloqueado con el motivo visible y el botón
+deshabilitado, la advertencia de vitamina C no bloquea el botón "Tomé", el
+texto del té verde cambia según horario, y **el botón "Tomé" de la
+notificación del TAR confirma sin abrir la app** — el gate de Fase 3 (§11)
+queda cerrado de punta a punta, no solo compilado.
 
 ### Qué falta (fuera de este alcance)
 Room+SQLCipher (Fase 0, historial persistente real), layouts adaptativos de
