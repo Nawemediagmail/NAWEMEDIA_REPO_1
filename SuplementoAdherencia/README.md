@@ -1,14 +1,19 @@
-# Adherencia — Fase 1: Motor de alarmas
+# Adherencia — Fase 1 + Fase 2
 
-Prototipo de **Fase 1** del PRD *App de Adherencia a Suplementación y TAR*
+Prototipo del PRD *App de Adherencia a Suplementación y TAR*
 (target: Samsung Galaxy Z Fold 7).
 
+## Fase 1 — Motor de alarmas ✅ GATE PASADO
+
 > **Alcance deliberadamente mínimo.** Esta fase construye **solo el motor de
-> alarmas** con **una alarma de prueba** (§11 del PRD). No hay base cifrada,
-> ni inventario, ni motor de reglas, ni UX plegable todavía. Eso es correcto:
-> el PRD marca este gate como *"el más importante del proyecto"*. Si la alarma
-> no sobrevive 48 h de reposo profundo de Samsung + un reinicio, nada de lo que
-> se construya encima sirve. Primero se valida esto; después se sigue.
+> alarmas** con **una alarma de prueba** (§11 del PRD). El PRD marca este gate
+> como *"el más importante del proyecto"*: si la alarma no sobrevive 48 h de
+> reposo profundo de Samsung + un reinicio, nada de lo que se construya encima
+> sirve.
+>
+> **Estado: verificado en dispositivo físico (Z Fold 7).** Corrió ~74 h con la
+> app cerrada, disparó 3 noches consecutivas a horario exacto, y se reprogramó
+> sola tras un reinicio real (`BOOT_COMPLETED` confirmado en el log de eventos).
 
 ## Qué implementa
 
@@ -85,9 +90,45 @@ programación, cada disparo y cada reprogramación por boot, con timestamp.
 
 ### Si el gate falla
 El sospechoso #1 en Samsung es el reposo profundo / optimización de batería.
-Reconfirmar el paso manual de Device Care. Si aun así falla, el diagnóstico es
-parte de esta fase — no se avanza a Fase 2 hasta que dispare limpio.
+Reconfirmar el paso manual de Device Care.
 
 ---
 
-*Herramienta de organización personal. No sustituye indicación médica.*
+## Fase 2 — Motor de reglas (§3) + contador de magnesio
+
+Capa de dominio en Kotlin puro (`domain/`), sin UI todavía — la vista "Hoy"
+es Fase 3 (§11). No depende de Room ni de Android: es lógica de negocio
+testeable con JUnit local, sin dispositivo.
+
+| Archivo | Qué implementa |
+|---|---|
+| `domain/Inventario.kt` | Los 12 ítems de §1/§2, transcriptos de etiqueta. Único valor [INFERENCIA]: magnesio elemental del treonato (§1.3, sin desglose en etiqueta) |
+| `domain/ReglaQuelacion.kt` | §3.1 — ventana de bloqueo Mg↔dolutegravir: permitido solo `≤TAR-2h` o `≥TAR+6h` |
+| `domain/ContadorMagnesio.kt` | §3.3 — suma de magnesio elemental de todas las fuentes activas, alerta a 350 mg |
+| `domain/ReglasLimites.kt` | §3.3 resto: NAC vencido bloqueado, 2ª fuente de vit. D bloqueada, nicotinamida 2 cáps requiere confirmación, té verde nocturno con advertencia, L-arginina inactiva hasta "modo entreno" |
+
+### Gate de Fase 2 (§11) — ✅ verificado, no solo razonado
+
+> *"Test unitario: programar magnesio a TAR+1h devuelve Bloqueado. Contador
+> elemental suma correcto."*
+
+Corrido y confirmado con `./gradlew testDebugUnitTest`: **21 tests, 21
+pasaron, 0 fallas.** Incluye exactamente los dos casos del gate:
+- `ReglaQuelacionTest > gate del PRD - magnesio a TAR mas 1h devuelve bloqueado`
+- `ContadorMagnesioTest > gate del PRD - K2D3 mas citrato suman 174 mg`
+
+Para volver a correrlos en Android Studio: click derecho sobre
+`app/src/test/java/.../domain/` → **Run Tests**, o `./gradlew testDebugUnitTest`
+desde la terminal del proyecto.
+
+### Qué falta para que esto sea usable (no es parte de este gate)
+El motor de reglas hoy es una librería de funciones puras, sin persistencia
+(Fase 0: Room+SQLCipher) ni UI que las invoque (Fase 3). Ambas quedan
+pendientes; este commit solo entrega la lógica de negocio validada.
+
+---
+
+*Herramienta de organización personal. No sustituye indicación médica. Las
+reglas de separación horaria y los límites de dosis deben validarse con el
+infectólogo o farmacéutico tratante antes de su uso — el TAR default (10:30,
+ventana 2h/6h) sigue pendiente de confirmación médica (§12.1).*
