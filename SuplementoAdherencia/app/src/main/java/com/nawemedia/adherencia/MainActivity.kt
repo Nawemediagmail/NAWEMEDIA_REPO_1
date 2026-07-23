@@ -29,19 +29,12 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import com.nawemedia.adherencia.alarm.AlarmScheduler
 import com.nawemedia.adherencia.ui.AdherenciaTheme
+import com.nawemedia.adherencia.ui.HoyScreen
 import com.nawemedia.adherencia.util.AlarmPrefs
 import com.nawemedia.adherencia.util.NotificationHelper
 import java.time.Instant
 import java.time.ZoneId
 
-/**
- * Fase 1 — pantalla única de prueba del motor de alarmas.
- *
- * El objetivo NO es la UX final (§9), sino instrumentar el gate más importante
- * del proyecto: que una alarma dispare tras 48 h con la app cerrada, en Doze
- * profundo, y se reprograme sola tras un reinicio. Por eso esta pantalla expone
- * los 4 pasos de robustez (§8.4) y un log de eventos auditable.
- */
 class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,9 +43,27 @@ class MainActivity : ComponentActivity() {
         setContent {
             AdherenciaTheme {
                 Surface(color = MaterialTheme.colorScheme.background) {
-                    Fase1Screen()
+                    AppRoot()
                 }
             }
+        }
+    }
+}
+
+private enum class Pantalla(val etiqueta: String) { HOY("Hoy"), DIAGNOSTICO("Diagnóstico") }
+
+@Composable
+private fun AppRoot() {
+    var pantalla by remember { mutableStateOf(Pantalla.HOY) }
+    Column(Modifier.fillMaxSize()) {
+        TabRow(selectedTabIndex = pantalla.ordinal) {
+            Pantalla.entries.forEach { p ->
+                Tab(selected = pantalla == p, onClick = { pantalla = p }, text = { Text(p.etiqueta) })
+            }
+        }
+        when (pantalla) {
+            Pantalla.HOY -> HoyScreen()
+            Pantalla.DIAGNOSTICO -> Fase1Screen()
         }
     }
 }

@@ -18,6 +18,7 @@ data class Item(
     val formato: String,
     val estado: EstadoItem,
     val flags: Set<ItemFlag>,
+    val categoria: Categoria = Categoria.OTROS,
     val nutrientes: List<Nutriente> = emptyList(),
     /** Último día válido según etiqueta (inclusive). Null = sin vencimiento declarado. */
     val vencimiento: LocalDate? = null,

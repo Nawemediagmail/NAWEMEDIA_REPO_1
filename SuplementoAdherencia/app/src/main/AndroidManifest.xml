@@ -45,6 +45,11 @@
             android:name=".alarm.AlarmReceiver"
             android:exported="false" />
 
+        <!-- F2 — procesa la acción "Tomé" de la notificación (confirmación en un tap). -->
+        <receiver
+            android:name=".alarm.ConfirmarTomaReceiver"
+            android:exported="false" />
+
         <!-- §8.3 Reprograma todas las alarmas activas tras reinicio. -->
         <receiver
             android:name=".alarm.BootReceiver"

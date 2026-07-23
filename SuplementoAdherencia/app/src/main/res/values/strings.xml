@@ -10,4 +10,5 @@
     <string name="alarm_notif_title">Recordatorio de toma</string>
     <string name="alarm_notif_text">Tocá para ver el detalle.</string>
     <string name="alarm_screen_generic">Es la hora de tu toma</string>
+    <string name="accion_tome">Tomé</string>
 </resources>

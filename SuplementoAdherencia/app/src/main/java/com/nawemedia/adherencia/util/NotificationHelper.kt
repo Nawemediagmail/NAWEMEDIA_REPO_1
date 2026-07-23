@@ -9,6 +9,7 @@ import android.content.Intent
 import androidx.core.app.NotificationCompat
 import com.nawemedia.adherencia.AlarmActivity
 import com.nawemedia.adherencia.R
+import com.nawemedia.adherencia.alarm.ConfirmarTomaReceiver
 
 /**
  * §8.5 Notificación del TAR.
@@ -38,7 +39,12 @@ object NotificationHelper {
         }
     }
 
-    fun showTarAlarm(context: Context, label: String) {
+    /**
+     * @param programacionIds ids de Programacion (dominio) que la acción "Tomé" de
+     * esta notificación marca como confirmadas — F2: confirmación en un tap, sin
+     * necesidad de abrir la app. Vacío = la notificación no ofrece esa acción directa.
+     */
+    fun showTarAlarm(context: Context, label: String, programacionIds: List<String> = emptyList()) {
         ensureChannel(context)
 
         val fullScreenIntent = Intent(context, AlarmActivity::class.java).apply {
@@ -52,7 +58,7 @@ object NotificationHelper {
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
-        val notification = NotificationCompat.Builder(context, CHANNEL_ID)
+        val builder = NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_alarm)
             // VISIBILITY_PRIVATE: título genérico visible en lockscreen, sin nombre de fármaco.
             .setContentTitle(context.getString(R.string.alarm_notif_title))
@@ -63,10 +69,23 @@ object NotificationHelper {
             .setOngoing(true)
             .setAutoCancel(false)
             .setFullScreenIntent(fullScreenPending, true)
-            .build()
+
+        if (programacionIds.isNotEmpty()) {
+            val confirmarIntent = Intent(context, ConfirmarTomaReceiver::class.java).apply {
+                action = ConfirmarTomaReceiver.ACTION_CONFIRMAR
+                putExtra(ConfirmarTomaReceiver.EXTRA_PROGRAMACION_IDS, programacionIds.toTypedArray())
+            }
+            val confirmarPending = PendingIntent.getBroadcast(
+                context,
+                1,
+                confirmarIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            )
+            builder.addAction(R.drawable.ic_alarm, context.getString(R.string.accion_tome), confirmarPending)
+        }
 
         context.getSystemService(NotificationManager::class.java)
-            .notify(NOTIFICATION_ID, notification)
+            .notify(NOTIFICATION_ID, builder.build())
     }
 
     fun dismiss(context: Context) {

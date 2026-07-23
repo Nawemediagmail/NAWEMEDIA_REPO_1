@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.util.Log
+import com.nawemedia.adherencia.domain.CRONOGRAMA_SEED
 import com.nawemedia.adherencia.util.AlarmPrefs
 import com.nawemedia.adherencia.util.NotificationHelper
 
@@ -20,7 +21,11 @@ class AlarmReceiver : BroadcastReceiver() {
         Log.i("AlarmReceiver", "onReceive: alarma disparada ($label)")
 
         AlarmPrefs.appendEvent(context, "🔔 DISPARÓ '$label'")
-        NotificationHelper.showTarAlarm(context, label)
+        // Esta alarma representa el ancla del TAR (§4): confirmarla desde la
+        // notificación marca las dos programaciones ancla (Mivuten + Zevuvir) del
+        // día en curso — F2, sin necesidad de abrir la app.
+        val idsTar = CRONOGRAMA_SEED.filter { it.esAncla }.map { it.id }
+        NotificationHelper.showTarAlarm(context, label, idsTar)
 
         // Reprograma la siguiente ocurrencia diaria para mantener la cadena viva.
         AlarmScheduler.scheduleDaily(context)

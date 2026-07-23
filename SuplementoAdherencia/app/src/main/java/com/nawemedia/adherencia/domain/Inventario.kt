@@ -18,7 +18,8 @@ val MIVUTEN = Item(
     tipo = TipoItem.MEDICACION,
     formato = "1 comprimido recubierto",
     estado = EstadoItem.ACTIVO,
-    flags = emptySet()
+    flags = emptySet(),
+    categoria = Categoria.MEDICACION_TAR
 )
 
 val ZEVUVIR = Item(
@@ -28,7 +29,8 @@ val ZEVUVIR = Item(
     tipo = TipoItem.MEDICACION,
     formato = "1 comprimido recubierto",
     estado = EstadoItem.ACTIVO,
-    flags = emptySet()
+    flags = emptySet(),
+    categoria = Categoria.MEDICACION_TAR
 )
 
 /** Ancla por defecto del seed (§4): 10:30. A confirmar con el médico (§12.1). */
@@ -44,6 +46,7 @@ val FYNUTRITION_K2_D3 = Item(
     formato = "60 cápsulas, 1 cápsula/porción",
     estado = EstadoItem.ACTIVO,
     flags = setOf(ItemFlag.CONTIENE_MAGNESIO, ItemFlag.LIPOSOLUBLE, ItemFlag.INTERACCION_ANTICOAGULANTES),
+    categoria = Categoria.LIPOSOLUBLES,
     nutrientes = listOf(
         Nutriente("Vitamina D", 100.0, "µg", FuenteDato.ETIQUETA),
         Nutriente("Vitamina K2 (Menaquinona-7)", 100.0, "µg", FuenteDato.ETIQUETA),
@@ -60,6 +63,7 @@ val CITRATO_MAGNESIO = Item(
     formato = "500 g polvo, porción 1,2 g",
     estado = EstadoItem.ACTIVO,
     flags = setOf(ItemFlag.CONTIENE_MAGNESIO, ItemFlag.QUELANTE_CATIONICO),
+    categoria = Categoria.MAGNESIO,
     nutrientes = listOf(
         Nutriente("Magnesio", 135.0, "mg", FuenteDato.ETIQUETA, esCationPolivalente = true)
     )
@@ -73,6 +77,7 @@ val TREONATO_MAGNESIO = Item(
     formato = "90 comprimidos, 1 comprimido/porción",
     estado = EstadoItem.ACTIVO,
     flags = setOf(ItemFlag.CONTIENE_MAGNESIO, ItemFlag.QUELANTE_CATIONICO, ItemFlag.VALOR_ELEMENTAL_ESTIMADO),
+    categoria = Categoria.MAGNESIO,
     nutrientes = listOf(
         Nutriente("Magnesio Treonato", 1000.0, "mg", FuenteDato.ETIQUETA),
         // [INFERENCIA] ≈70-80 mg elemental, no desglosado en etiqueta (§1.3).
@@ -90,6 +95,7 @@ val VITAMINA_C = Item(
     formato = "500 g polvo, dosis 2 g/día",
     estado = EstadoItem.ACTIVO,
     flags = setOf(ItemFlag.LIMITE_SUPERIOR, ItemFlag.RIESGO_OXALATO_RENAL),
+    categoria = Categoria.VITAMINA_C,
     nutrientes = listOf(
         Nutriente("Ácido ascórbico", 2000.0, "mg", FuenteDato.ETIQUETA)
     )
@@ -103,6 +109,7 @@ val L_ARGININA = Item(
     formato = "150 g polvo, porción 3,8 g",
     estado = EstadoItem.INACTIVO,
     flags = setOf(ItemFlag.VASODILATADOR, ItemFlag.REQUIERE_ESTOMAGO_VACIO, ItemFlag.CONDICIONAL_A_ENTRENAMIENTO),
+    categoria = Categoria.AMINOACIDOS,
     nutrientes = listOf(
         Nutriente("L-Arginina", 3800.0, "mg", FuenteDato.ETIQUETA)
     )
@@ -116,6 +123,7 @@ val ORNITINA = Item(
     formato = "100 g polvo, 500 mg 2-3 veces/día",
     estado = EstadoItem.INACTIVO,
     flags = setOf(ItemFlag.VASODILATADOR_INDIRECTO, ItemFlag.MULTIDOSIS_DIARIA),
+    categoria = Categoria.AMINOACIDOS,
     nutrientes = listOf(
         Nutriente("Ornitina", 500.0, "mg", FuenteDato.ETIQUETA)
     )
@@ -130,6 +138,7 @@ val NAC = Item(
     // El bloqueo real lo decide estaVencido(), no este campo — ver ReglasLimites.evaluarNac().
     estado = EstadoItem.ACTIVO,
     flags = setOf(ItemFlag.DOSIS_NO_ESPECIFICADA, ItemFlag.VENCIDO, ItemFlag.AYUNAS),
+    categoria = Categoria.AMINOACIDOS,
     // Vencimiento "05/2026" en etiqueta = mes/año sin día; se asume último día del mes declarado.
     vencimiento = LocalDate.of(2026, 5, 31),
     notaEstado = "Vencido — bloqueado hasta reposición (§1.7)"
@@ -143,6 +152,7 @@ val MELENA_DE_LEON = Item(
     formato = "Extracto concentrado, 60 ml",
     estado = EstadoItem.ACTIVO,
     flags = setOf(ItemFlag.DATOS_INCOMPLETOS, ItemFlag.AYUNAS, ItemFlag.LIQUIDO_SUBLINGUAL_U_ORAL),
+    categoria = Categoria.ADAPTOGENOS,
     notaEstado = "Datos de etiqueta incompletos — falta fotografiar contraetiqueta (§1.8)"
 )
 
@@ -154,6 +164,7 @@ val NAD_RESVERATROL = Item(
     formato = "60 cápsulas, 1-2 cápsulas/porción",
     estado = EstadoItem.ACTIVO,
     flags = setOf(ItemFlag.CONTIENE_CAFEINA_TE_VERDE, ItemFlag.LIMITE_SUPERIOR_NIACINA, ItemFlag.HEPATOTOXICIDAD_TE_VERDE),
+    categoria = Categoria.ANTIOXIDANTES,
     nutrientes = listOf(
         Nutriente("Vitamina B3 (Nicotinamida)", 300.0, "mg", FuenteDato.ETIQUETA),
         Nutriente("Extracto de té verde", 100.0, "mg", FuenteDato.ETIQUETA),
@@ -171,6 +182,7 @@ val BHB_MAGNESIO_EXCLUIDO = Item(
     formato = "100 g",
     estado = EstadoItem.EXCLUIDO,
     flags = setOf(ItemFlag.EXCLUIDO),
+    categoria = Categoria.EXCLUIDO,
     vencimiento = LocalDate.of(2028, 12, 31),
     notaEstado = "EXCLUIDO: etiqueta declara \"uso industrial exclusivo\", sin garantía de grado alimentario (§1.10)"
 )

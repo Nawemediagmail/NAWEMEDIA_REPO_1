@@ -121,10 +121,72 @@ Para volver a correrlos en Android Studio: click derecho sobre
 `app/src/test/java/.../domain/` → **Run Tests**, o `./gradlew testDebugUnitTest`
 desde la terminal del proyecto.
 
-### Qué falta para que esto sea usable (no es parte de este gate)
-El motor de reglas hoy es una librería de funciones puras, sin persistencia
-(Fase 0: Room+SQLCipher) ni UI que las invoque (Fase 3). Ambas quedan
-pendientes; este commit solo entrega la lógica de negocio validada.
+---
+
+## Fase 3 — UI Compose: vista "Hoy" + confirmación
+
+### Sistema de color: identidad de categoría vs. estado de la regla
+
+Decisión de diseño explícita, no accidental: la app tiene dos sistemas de
+color que **no deben competir entre sí**.
+
+- **Color de categoría** (`ui/DesignTokens.kt`) — identidad visual del ítem
+  para escaneo rápido (TAR, Magnesio, Liposolubles, Vitamina C, Aminoácidos,
+  Adaptógenos, Antioxidantes). Tonos **muted/pastel** a propósito, mostrados
+  como franja lateral + ícono + etiqueta de texto en cada tarjeta — nunca
+  color solo (accesibilidad/daltonismo).
+- **Color de estado** (`ui/EstadoVisual.kt` + `ColoresExtendidos` en
+  `ui/Theme.kt`) — semántico, saturado: verde (`success`, custom, Material3
+  no lo trae) = permitido, ámbar (`warning`, custom) = advertencia, rojo
+  (`error` de Material3) = bloqueado. Reservado exclusivamente para el
+  resultado de `MotorReglas`.
+
+Si ambos usaran colores igual de saturados se pisarían visualmente y el
+usuario no distinguiría "esto es K2+D3" de "esto está bloqueado ahora" — que
+es exactamente el error que esta app existe para prevenir.
+
+### Qué implementa
+
+| Archivo | Qué hace |
+|---|---|
+| `domain/Categoria.kt` (en `Enums.kt`) + `Item.categoria` | Categoría de cada ítem, independiente de sus `ItemFlag` de riesgo |
+| `domain/Programacion.kt`, `domain/CronogramaSeed.kt` | Cronograma default de §4, con selector excluyente (`grupoExcluyente`) para el magnesio nocturno (citrato/treonato) |
+| `domain/MotorReglas.kt` | Facade que combina §3.1 + §3.3 en un solo `ResultadoRegla` por ítem programado |
+| `ui/HoyScreen.kt` | Vista "Hoy": cronograma del día, contador de magnesio en vivo, confirmación con un tap, selector de magnesio nocturno, gate de L-arginina |
+| `util/ConfirmacionesPrefs.kt`, `util/PreferenciasUsuario.kt` | Persistencia liviana (SharedPreferences) de confirmaciones y preferencias — Room+SQLCipher sigue siendo Fase 0, no forma parte de este alcance |
+| `util/NotificationHelper.kt` + `alarm/ConfirmarTomaReceiver.kt` | F2 — acción "Tomé" directa en la notificación del TAR, sin abrir la app |
+
+### Alcance real de la confirmación desde notificación (honestidad de scope)
+
+El gate de Fase 3 (§11) es *"Flujo completo de confirmación desde
+notificación funciona"*. Esto está resuelto **para el TAR** (el ancla, el
+ítem crítico): la alarma ya validada en el gate de Fase 1 ahora dispara con
+un botón "Tomé" que marca Mivuten + Zevuvir como tomados sin abrir la app.
+
+Los demás ítems del cronograma (magnesio, vitamina C, etc.) todavía **no**
+tienen alarma individual — se confirman con un tap dentro de la app (Hoy),
+no desde una notificación propia. Generalizar F1 (alarma exacta por cada
+ítem) a todo el inventario es el próximo incremento, no algo ya hecho acá.
+
+### Verificado, no solo escrito
+
+Corrido en este entorno con el mismo Android SDK bootstrapeado que en Fase 2:
+- `./gradlew testDebugUnitTest` → **32 tests, 32 pasaron, 0 fallas** (los 21
+  de Fase 2 + 4 de `CronogramaSeedTest` + 7 de `MotorReglasTest`).
+- `./gradlew assembleDebug` → **BUILD SUCCESSFUL**, APK debug generado sin
+  errores (confirma que Compose + Material Icons Extended + el manifest
+  actualizado compilan y empaquetan correctamente).
+
+Lo único que **no** se verificó acá (requiere el Z Fold 7 físico): que la
+UI se vea y comporte bien en pantalla real, y que el botón "Tomé" de la
+notificación efectivamente actualice el estado en la vista Hoy al reabrir
+la app. Correspondería probarlo igual que Fase 1: instalar, y confirmar a
+ojo.
+
+### Qué falta (fuera de este alcance)
+Room+SQLCipher (Fase 0, historial persistente real), layouts adaptativos de
+plegado §9 (Fase 4), biometría (Fase 6), export CSV (Fase 5/F10), alarmas
+exactas por cada ítem del cronograma (generalización de F1).
 
 ---
 
